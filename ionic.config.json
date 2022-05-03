@@ -1,0 +1,7 @@
+{
+  "name": "emotional quotes",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
