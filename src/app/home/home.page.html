@@ -1,20 +1,37 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>
-      Blank
-    </ion-title>
-  </ion-toolbar>
-</ion-header>
-
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
-    </ion-toolbar>
-  </ion-header>
-
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
+  <!-- <video src="video" autoplay muted></video> -->
+  <div class="footer">
+    <ion-fab vertical="bottom" horizontal="center" slot="fixed">
+      <ion-fab-button (click)="addPhotoToGallery()">
+        <ion-icon name="camera"></ion-icon>
+      </ion-fab-button>
+    </ion-fab>
   </div>
+  
+  <div *ngFor="let wallpaper of wallpapers ; let i = index">
+  <ion-card class="ion-no-padding">
+    <ion-card-content [id]="i" class="ion-no-margin ion-no-padding">
+    <div class="wallpaper" style="background:linear-gradient(0deg, rgba(0, 89, 255, 0.3), rgba(84, 0, 49, 0.3)),url({{wallpaper.src.portrait}});width: 100%;height: 75vh;background-size: cover;">
+    </div>
+    <div id="container" class="qoute-text" *ngIf="Qoutes[0].random === true" >
+      {{Qoutes[0].res.quote}}
+      <br>Author "{{Qoutes[0].res.name}}"
+    </div>
+    <div id="container" class="qoute-text" *ngIf="Qoutes[0].random === false" >
+      {{Qoutes[i].res.quote}}
+      <br>Author "{{Qoutes[i].res.name}}"
+    </div>
+    </ion-card-content>
+    <div class="buttons">
+      <!-- <ion-button fill="clear" (click)="loveThis()">
+          <ion-icon  [src]="heartIconSrc" color="danger"></ion-icon>
+      </ion-button> -->
+      <ion-button fill="clear" (click)="share(i)">
+        <ion-icon src="assets/icon/share-social-outline.svg"></ion-icon>
+      </ion-button>
+    </div>
+      
+  </ion-card>
+</div>
+  
 </ion-content>

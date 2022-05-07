@@ -1,0 +1,6 @@
+{
+	"appId": "io.ionic.starter",
+	"appName": "emotional quotes",
+	"webDir": "www",
+	"bundledWebRuntime": false
+}
