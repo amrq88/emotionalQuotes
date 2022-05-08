@@ -3,11 +3,14 @@ import { Component } from '@angular/core';
 import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
 import { ChangeDetectorRef } from '@angular/core';
 import domtoimage from 'dom-to-image';
-// import { Camera, CameraResultType, CameraSource, Photo } from '@capacitor/camera';
 import { Share } from '@capacitor/share';
-// import { PhotoService } from '../services/photo.service';
+
 import { Camera, CameraResultType, CameraSource, Photo } from '@capacitor/camera';
-import { FileDownload } from "capacitor-plugin-filedownload";
+
+import { CameraPreview, CameraPreviewOptions } from '@capacitor-community/camera-preview';
+import * as FaceAPI from '@vladmandic/face-api';
+
+// import { TinyFaceDetector,FaceLandmark68Net, FaceRecognitionNet,FaceExpressionNet,detectAllFaces, tinyFaceDetector, TinyFaceDetectorOptions} from '@vladmandic/face-api'
 const IMAGE_DIR = 'stored-images';
 interface LocalFile {
   name: string;
@@ -20,6 +23,7 @@ interface LocalFile {
   styleUrls: ['home.page.scss'],
 })
 export class HomePage {
+  cameraActive=false;
   quotes: any;
   randomQuotes: any;
   wallpapers: any;
@@ -33,11 +37,12 @@ export class HomePage {
   Qoutes: { res: Object;random:boolean; }[];
   theRandomNumber: number;
   constructor(private http: HttpClient,private cd: ChangeDetectorRef) {
-    this.getAllQoutes();
-    this.getWallpaper();
+    // this.getAllQoutes();
+    // this.getWallpaper();
     this.heartIconSrc = 'assets/icon/heart-outline.svg';
     //create image dir
     // this.createImageDir();
+    this.videoDetection();
   }
   async createImageDir(){
       //Folder does not yet exists!
@@ -234,5 +239,55 @@ getAllQoutesSearch(search) {
     }, 3000);
     
 }
-  
+ async videoDetection(){
+   Promise.all([
+    await FaceAPI.nets.tinyFaceDetector.loadFromUri('assets/model'),
+    await FaceAPI.nets.faceExpressionNet.loadFromUri('assets/model'),
+    await FaceAPI.nets.faceLandmark68Net.loadFromUri('assets/model'),
+    await FaceAPI.nets.faceRecognitionNet.loadFromUri('assets/model')
+   ]).then(()=>{
+    this.startVideoDetection()
+   })   
+  }
+  async startVideoDetection(){
+    
+    const cameraPreviewOptions: CameraPreviewOptions = {
+      position: 'front',
+      height:480,
+      width: 640,
+      disableAudio:true,
+      parent:'cameraPreview',
+      className:'cameraPreview',
+      
+    };
+    CameraPreview.start(cameraPreviewOptions).then(()=>{
+      this.cameraActive=true;
+      const video= document.getElementById('video') as HTMLCanvasElement;
+        video.addEventListener('play',()=>{
+          const displaySize = { width: 640, height: 480 }
+          const Canvas = FaceAPI.createCanvas(displaySize);
+          const addClassToDrawCanva = document.getElementById('cameraPreview').appendChild(Canvas)
+          addClassToDrawCanva.setAttribute("id","canvasDraw");
+          document.getElementById('video').style.transform = 'scaleX(1)';
+          document.getElementById('canvasDraw').style.position = 'absolute';
+          document.getElementById('canvasDraw').style.top = '0'; 
+          document.getElementById('canvasDraw').style.zIndex = '99'; 
+          FaceAPI.matchDimensions(Canvas,displaySize)
+          setInterval(async () => {
+            const detections =await FaceAPI.detectSingleFace(video,
+            new FaceAPI.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceExpressions()
+            console.log(detections);
+            const resizedDetections = FaceAPI.resizeResults(detections,displaySize)
+            Canvas.getContext('2d').clearRect(0,0,Canvas.width,Canvas.height)
+            FaceAPI.draw.drawDetections(Canvas ,resizedDetections )
+            FaceAPI.draw.drawFaceExpressions(Canvas ,resizedDetections )
+            FaceAPI.draw.drawFaceLandmarks(Canvas ,resizedDetections )
+          },100)
+          
+        })
+    });
+    
+    
+    
+  }
 }
