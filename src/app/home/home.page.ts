@@ -182,7 +182,7 @@ googleVisionApi(base64){
     "image": {
     "content": base64
     }}]}
-   return this.http.post('https://vision.googleapis.com/v1/images:annotate?key=' + 'AIzaSyAtC5fVuLlfTZbX1xxI_YsDbMOedS3UgnU', body);
+   return this.http.post('https://vision.googleapis.com/v1/images:annotate?key=' + 'YOU-API-KEY', body);
 }
 callQoutesWithEmotion(){
   const emotions = this.userEmotions.responses[0].faceAnnotations[0];
