@@ -56,7 +56,7 @@ export class HomePage {
       headers: new HttpHeaders({
         'content-type': 'application/json',
         'X-RapidAPI-Host': 'quotel-quotes.p.rapidapi.com',
-        'X-RapidAPI-Key': 'c7d3c51cd8msh4482da671e24d30p1fcf19jsn62c304bf6cbe',
+          'X-RapidAPI-Key': 'YOU-API-KEY',
       }),
     };
     const body = {
@@ -80,7 +80,7 @@ export class HomePage {
     
     fetch('https://api.pexels.com/v1/search?query=background&per_page=10&size=small&orientation=portrait', {
       headers: {
-        Authorization: '563492ad6f917000010000014f2f040ce43249a4b1ddfc45fadbe1ba',
+        Authorization: 'YOU-API-KEY',
       },
     })
       .then((resp) => {
@@ -94,7 +94,7 @@ export class HomePage {
   getWallpaperWithSearchKey() {
     fetch('https://api.pexels.com/v1/search?query=people&size=small&orientation=portrait', {
       headers: {
-        Authorization: '563492ad6f917000010000014f2f040ce43249a4b1ddfc45fadbe1ba',
+        Authorization: 'YOU-API-KEY',
       },
     })
       .then((resp) => {
